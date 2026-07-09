@@ -1,0 +1,8 @@
+dist
+node_modules
+.env.development
+.env.production
+/generated/prisma
+seed.ts
+
+learn.txt
