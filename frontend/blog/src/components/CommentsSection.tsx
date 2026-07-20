@@ -32,7 +32,6 @@ export default function CommentsSection({comments, onAddComment, isAuthenticated
             setNewComment('');
         } catch (error) {
             console.error('Failed to Post Comment : ', error);
-
         } finally {
             setIsSubmitting(false);
         }
