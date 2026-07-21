@@ -30,7 +30,7 @@ router.post('/signup', async (req, res)=>{
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const admin = prisma.admin.create({
+        const admin = await prisma.admin.create({
             data : {
                 username, 
                 email,
@@ -72,7 +72,7 @@ router.post('/login', async (req, res)=>{
         })
     }
 });
-router.get('/profile',  passport.authenticate('jwt', {session : false}), (res, req)=>{
+router.get('/profile',  passport.authenticate('jwt', {session : false}), (req, res)=>{
     return res.json({admin : req.user});
 });
 router.post('/logout', passport.authenticate('jwt', {session : false}), (_req, res)=>{

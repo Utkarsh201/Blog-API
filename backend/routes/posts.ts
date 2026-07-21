@@ -1,7 +1,7 @@
 import express, {Request, Response, NextFunction, RequestHandler} from "express";
 import passport from "passport"
 import prisma from "../prisma/client.js"
-import isAdmin from "../middleware/auth.js"
+import {isAdmin} from "../middleware/auth.js"
 
 const authenticateAdmin : RequestHandler = (req : Request, res : Response, next : NextFunction)=>{
     const auth = passport.authenticate('jwt', {session : false}, (err : Error | null, user?:Express.User)=>{
@@ -73,7 +73,7 @@ router.get('/admin', authenticateAdmin,  async (req, res)=>{
         return res.json({posts});
     } catch (error) {
         console.error("Error Fectching Admin Post :", error);
-        res.status(500).json({
+        return res.status(500).json({
             error : 'Failed to fetch posts'
         })
     }
@@ -83,7 +83,7 @@ router.get('/admin', authenticateAdmin,  async (req, res)=>{
 router.get('/:id', async (req, res)=>{
     const {id} = req.params;
     try {
-        const post = prisma.post.findUnique({
+        const post = await prisma.post.findUnique({
             where : {id : id as string},
             include : {
                 author : true,
@@ -110,7 +110,7 @@ router.get('/:id', async (req, res)=>{
             });
             return ;
         }
-        res.json(post)
+        return res.json(post)
     } catch (error) {
         console.error("Error Fetching Post");
         return res.status(500).json({
@@ -119,7 +119,7 @@ router.get('/:id', async (req, res)=>{
     }
 })
 
-router.post('/', passport.authenticate('jwt', {session : false}), isAdmin, (req, res)=>{
+router.post('/', passport.authenticate('jwt', {session : false}), isAdmin, async (req, res)=>{
     const {title , content} = req.body;
     const authorId = req.user?.id;
 
@@ -138,12 +138,12 @@ router.post('/', passport.authenticate('jwt', {session : false}), isAdmin, (req,
     }
 
     try {
-        const post = prisma.post.create({
+        const post = await prisma.post.create({
             data : {
                 title : String(title),
                 content : String(content),
                 authorId : String(authorId),
-                isPublished : true,
+                published : true,
             },
             include : {
                 author : {
