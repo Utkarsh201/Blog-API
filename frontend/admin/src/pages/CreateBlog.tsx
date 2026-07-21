@@ -20,7 +20,7 @@ export default function CreateBlog(){
         setError('');
 
         try {
-            const token = localStorage.getItem('token') || localStorage.getItems('adminToken');
+            const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
 
             if(!token){
                 throw new Error('No authentication token found pls login again');
@@ -37,7 +37,7 @@ export default function CreateBlog(){
                 },
                 body : JSON.stringify({
                     title : title.trim(),
-                    cotent : content.trim(),
+                    content : content.trim(),
                     published : true
                 }),
                 credentials : 'include'

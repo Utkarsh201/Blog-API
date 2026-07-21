@@ -20,7 +20,7 @@ const SignupFormWithProps  = ({setToken}: {setToken : SetTokenType}) => (
 
 function App() {
 
-  const [token, setToken] = useState<String | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(()=>{
     const storedToken = localStorage.getItem('adminToken');

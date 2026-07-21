@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom'
+import deleteIcon from '../assets/delete.svg'
 
 
 
@@ -64,7 +65,7 @@ export default function DashBoard(){
                 }
 
                 try {
-                    const data = response.json();
+                    const data = await response.json();
                     console.log('Fetched Blog Data : ', data);
                     setBlogs(Array.isArray(data) ? data : (data.posts || []));
                 } catch (error) {
@@ -96,7 +97,7 @@ export default function DashBoard(){
             const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/posts/${blogId}`, {
                 method : 'DELETE',
                 headers : {
-                    'Authorizatoin' : `Bearer ${token}`,
+                    'Authorization' : `Bearer ${token}`,
                     'Content-Type' : 'application/json'
                 },
                 credentials : 'include'
@@ -113,10 +114,11 @@ export default function DashBoard(){
 
 
     const handleLogout = async () => {
+        setIsLoggingOut(true);
         try {
             const token = localStorage.getItem('adminToken');
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL} || ''/admin/logout`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/admin/logout`, {
                 method : 'POST',
                 headers : {
                     'Authorization' : `Bearer ${token}`,

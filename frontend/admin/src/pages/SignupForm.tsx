@@ -3,7 +3,7 @@ import {useNavigate, Link} from 'react-router-dom';
 
 
 interface SignUpFormProps{
-    setToken : (token : String) => void
+    setToken : (token : string) => void
 }
 
 export default function SignUpForm({setToken} : SignUpFormProps){
