@@ -1,15 +1,14 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
-// import './config/passport.js';
-
-
-dotenv.config();
+import passport from 'passport';
+import './config/passport.js';
+import prisma from './prisma/client.js';
+import usersRouter from './routes/users.js';
+import adminRouter from './routes/admin.js';
+import postsRouter from './routes/posts.js';
 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const prisma = new PrismaClient();
 
 
 const allowOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',').map(x => x.trim()) : [];
@@ -17,6 +16,9 @@ const allowOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split('
 
 app.use((req, res, next) => {
     const origin = req.headers.origin || '';
+    if (!origin) {
+        return next();
+    }
     if (allowOrigins.includes(origin) || allowOrigins.includes('*')) {
         res.header('Access-Control-Allow-Origin', origin);
         res.header('Access-Control-Allow-Credentials', 'true');
@@ -31,16 +33,21 @@ app.use((req, res, next) => {
     }
 });
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use(passport.initialize());
+
+app.use('/users', usersRouter);
+app.use('/admin', adminRouter);
+app.use('/posts', postsRouter);
+
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error("Server Error", err);
     res.status(500).json({
         error: 'Internal Server Error'
     })
 })
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
 
 prisma.$connect()
@@ -49,8 +56,6 @@ prisma.$connect()
     }).catch((error: any) => {
         console.log("Database connection Error", error);
     })
-
-// routes here 
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

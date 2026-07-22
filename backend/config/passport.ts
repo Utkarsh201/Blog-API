@@ -1,9 +1,13 @@
+import 'dotenv/config'
 import passport from 'passport'
 import {Strategy as JwtStrategy, ExtractJwt} from 'passport-jwt'
-import { PrismaClient } from '@prisma/client'
+import prisma from '../prisma/client.js'
 
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET must be set in the environment');
+}
 
 
 const opts = {

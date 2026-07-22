@@ -1,12 +1,18 @@
 import express from "express"
-import {PrismaClient} from '@prisma/client'
 import passport from "passport"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import prisma from "../prisma/client.js"
 
 const router = express.Router();
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || ""; 
+
+const getJwtSecret = () => {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+        throw new Error('JWT_SECRET must be set in the environment');
+    }
+    return jwtSecret;
+}
 
 router.post('/signup', async (req, res)=>{
     try {
@@ -41,7 +47,7 @@ router.post('/signup', async (req, res)=>{
         const token = jwt.sign({
             id : admin.id,
             isAdmin : true,
-        }, JWT_SECRET);
+        }, getJwtSecret());
 
         return res.status(201).json({
             token, redirect : './admin/dashboard'
@@ -64,7 +70,7 @@ router.post('/login', async (req, res)=>{
         const token = jwt.sign({
             id : admin.id,
             isAdmin : true
-        }, JWT_SECRET)
+        }, getJwtSecret())
         return res.json({token, redirect : '/admin/dashboard'});
     } catch (error) {
         return res.status(400).json({

@@ -50,7 +50,7 @@ router.get('/', async (_req, res)=>{
     }
 })
 
-router.get('/admin', authenticateAdmin,  async (req, res)=>{
+router.get('/admin', authenticateAdmin, isAdmin,  async (req, res)=>{
     try {
         const posts = await prisma.post.findMany({
             where : {
@@ -177,12 +177,18 @@ router.post('/', passport.authenticate('jwt', {session : false}), isAdmin, async
 });
 
 
-router.put('/:id', async (req, res)=>{
+router.put('/:id', passport.authenticate('jwt', {session : false}), isAdmin, async (req, res)=>{
     const {id} = req.params;
     const {title, content, published} = req.body;
+    if (!id) {
+        return res.status(400).json({
+            error : "Post id is required"
+        })
+    }
+
     try {
         const post = await prisma.post.update({
-            where : {id},
+            where : {id : String(id)},
             data : {title, content, published},
         });
         return res.json(post);
@@ -194,11 +200,17 @@ router.put('/:id', async (req, res)=>{
 })
 
 
-router.delete('/:id', async (req, res)=>{
+router.delete('/:id', passport.authenticate('jwt', {session : false}), isAdmin, async (req, res)=>{
     const {id} = req.params;
+    if (!id) {
+        return res.status(400).json({
+            error : "Post id is required"
+        })
+    }
+
     try {
         await prisma.post.delete({
-            where : {id}
+            where : {id : String(id)}
         });
         return res.status(204).send();
     } catch (error) {
@@ -219,6 +231,10 @@ router.post('/:postId/comments', passport.authenticate('jwt', {session : false})
     const {postId} = req.params;
     const {content} = req.body;
     const authorId = req.user?.id;
+
+    if (req.user?.isAdmin) {
+        return res.status(403).json({ error: 'Only users can create comments' });
+    }
     
     if (!content) {
         console.error('Missing content in request body');
