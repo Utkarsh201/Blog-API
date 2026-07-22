@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
 
 
@@ -18,7 +18,7 @@ export default function SignUpForm({setToken} : SignUpFormProps){
     const [loading, setLoading] = useState(false);
 
 
-    const handleSubmit = async (e : React.FormEvent)=>{
+    const handleSubmit = async (e : React.SyntheticEvent)=>{
         e.preventDefault();
         setLoading(true);
         setError('');

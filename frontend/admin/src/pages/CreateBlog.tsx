@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 export default function CreateBlog(){
@@ -8,7 +8,7 @@ export default function CreateBlog(){
     const [error, setError] = useState('');
     const navigate = useNavigate(); 
 
-    const handleSubmit = async (e : React.FormEvent) => {
+    const handleSubmit = async (e : React.SyntheticEvent) => {
         e.preventDefault();
 
         if(!title.trim() || !content.trim()){
