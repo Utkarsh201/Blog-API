@@ -1,8 +1,8 @@
-import {useState, useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
+import {useState} from 'react'
+import {Link, useNavigate} from 'react-router-dom'
 
 interface LoginFormProps {
-    setToken : (token : String) => void;
+    setToken : (token : string) => void;
 }
 
 
@@ -38,7 +38,7 @@ export default function LoginForm ({setToken} : LoginFormProps){
                 console.log('Login Successful, token :', data.token);
                 localStorage.setItem('token', data.token);
                 setToken(data.token);
-                window.location.href = '/';
+                navigate('/');
             }else {
                 console.log('Login Failed :', data);
                 setError(data.error || 'Login Failed')
@@ -96,9 +96,9 @@ export default function LoginForm ({setToken} : LoginFormProps){
             </form>
             <p className="mt-4">
             Don't have an account?{' '}
-            <a href="/signup" className="text-blue-500 hover:underline">
+            <Link to="/signup" className="text-blue-500 hover:underline">
                 Sign up
-            </a>
+            </Link>
             </p>
         </div>
         </div>

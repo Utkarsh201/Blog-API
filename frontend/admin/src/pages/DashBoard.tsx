@@ -28,14 +28,14 @@ export default function DashBoard(){
     useEffect(()=>{
         const fetchBlogs = async () => {
             try {
-                let token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+                const token = localStorage.getItem('adminToken');
 
                 if(!token){
                     console.error('No authentication Error found');
                     return ;
                 }
 
-                console.log('Making request to', `${import.meta.env.VITE_API_URL || ''}/posts`);
+                console.log('Making request to', `${import.meta.env.VITE_API_URL || ''}/posts/admin`);
                 console.log('Using token :', token ? 'Token exists' : 'No token');
 
                 const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/posts/admin`, {
@@ -56,11 +56,11 @@ export default function DashBoard(){
                         const errorData = await response.json();
                         console.error('Error response data:', errorData);
                         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                    } catch (e) {
+                    } catch (parseError) {
                         console.error('Could not parse error response as JSON, trying text...');
                         const text = await responseClone.text();
                         console.error('Raw error response:', text);
-                        throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                        throw new Error(`HTTP error! status: ${response.status}, body: ${text}`, {cause : parseError});
                     }
                 }
 
@@ -68,11 +68,11 @@ export default function DashBoard(){
                     const data = await response.json();
                     console.log('Fetched Blog Data : ', data);
                     setBlogs(Array.isArray(data) ? data : (data.posts || []));
-                } catch (error) {
+                } catch (parseError) {
                     console.error('Failed to parse response as JSON');
                     const text = await responseClone.text();
                     console.error('Raw response:', text);
-                    throw new Error('Failed to parse response as JSON');
+                    throw new Error('Failed to parse response as JSON', {cause : parseError});
                 }
             } catch (error) {
                 console.error('Error in fetchBlogs:', {
@@ -91,7 +91,6 @@ export default function DashBoard(){
         if(!window.confirm('Are you sure you want to delete the blog')){
             return ;
         }
-        setBlogs(blogs.filter(blog => blog.id != blogId));
         try {
             const token = localStorage.getItem('adminToken');
             const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/posts/${blogId}`, {
@@ -106,6 +105,8 @@ export default function DashBoard(){
             if(!response.ok){
                 throw new Error('Failed to delete the POST');
             }
+
+            setBlogs(currentBlogs => currentBlogs.filter(blog => blog.id !== blogId));
         } catch (error) {
             console.error('Error Deleting post : ', error);
             alert('Failed to delete the POST');
@@ -132,11 +133,13 @@ export default function DashBoard(){
             }
 
             localStorage.removeItem('adminToken');
+            localStorage.removeItem('token');
             window.location.href = '/admin/login';
 
         } catch (error) {
             console.error('Logout error : ', error);
             localStorage.removeItem('adminToken');
+            localStorage.removeItem('token');
             window.location.href = '/admin/login';
         }
     };

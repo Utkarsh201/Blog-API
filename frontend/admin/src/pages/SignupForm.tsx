@@ -41,13 +41,14 @@ export default function SignUpForm({setToken} : SignUpFormProps){
 
             if(response.ok){
                 const data = await response.json();
+                localStorage.setItem('adminToken', data.token);
                 setToken(data.token);
                 navigate('/dashboard');
             }else {
                 const errorData = await response.json();
                 setError(errorData.error || 'Admin SignUp Failed');
             }
-        } catch (error) {
+        } catch {
             setError('Network Error, Please try again');   
         } finally {
             setLoading(false);

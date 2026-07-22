@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {useNavigate} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 
 interface SignUpFormProps {
     setToken : (token : string) => void;
@@ -39,7 +39,7 @@ export default function SignUpForm({setToken} : SignUpFormProps){
             });
 
             if(response.ok){
-                const data = response.json();
+                const data = await response.json();
                 localStorage.setItem('token', data.token);
                 setToken(data.token);
                 navigate('/')
@@ -47,7 +47,7 @@ export default function SignUpForm({setToken} : SignUpFormProps){
                 const errorData = await response.json();
                 setError(errorData.error || 'Sign Up Failed')
             }
-        } catch (error){
+        } catch {
             setError('NetWork Error. Please try again');
         } finally {
             setLoading(false);
@@ -123,9 +123,9 @@ export default function SignUpForm({setToken} : SignUpFormProps){
             </form>
             <p className="mt-4">
             Already have an account?{' '}
-            <a href="/login" className="text-blue-500 hover:underline">
+            <Link to="/login" className="text-blue-500 hover:underline">
                 Log in
-            </a>
+            </Link>
             </p>
         </div>
         </div>

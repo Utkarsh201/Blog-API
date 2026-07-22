@@ -61,7 +61,9 @@ export default function Home({ onLogout, isAuthenticated }: HomeProps) {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle menu"
             >
-              <img src={MenuIcon} alt="Menu" className="w-6 h-6" />
+              <span className="block w-6 h-0.5 bg-white mb-1.5" />
+              <span className="block w-6 h-0.5 bg-white mb-1.5" />
+              <span className="block w-6 h-0.5 bg-white" />
             </button>
           </div>
           {isAuthenticated ? null : (

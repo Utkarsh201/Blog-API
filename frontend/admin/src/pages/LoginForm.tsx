@@ -28,7 +28,6 @@ export default function LoginForm({setToken}: LoginFromProps){
 
             if(response.ok){
                 const data = await response.json();
-                localStorage.setItem('token', data.token);
                 localStorage.setItem('adminToken', data.token);
                 setToken(data.token);
                 navigate('/dashboard');
@@ -36,7 +35,7 @@ export default function LoginForm({setToken}: LoginFromProps){
                 const errorData = await response.json();
                 setError(errorData.error || 'Login Failed');
             }
-        } catch (error) {
+        } catch {
             setError('Network Error, Please try again');
         } finally {
             setLoading(false);

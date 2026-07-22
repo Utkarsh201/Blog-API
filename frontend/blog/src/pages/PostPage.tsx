@@ -177,7 +177,7 @@ export default function PostPage({ isAuthenticated }: PostPageProps) {
 
 
     try {
-        const response = await fetch(`/posts/${id}/comments`, {
+        const response = await fetchWithAuth(`/posts/${id}/comments`, {
             method : 'POST',
             body : JSON.stringify({content}), 
         })
@@ -203,7 +203,7 @@ export default function PostPage({ isAuthenticated }: PostPageProps) {
 
         } catch (error) {
           console.error('Failed to parse Sucessfull response :', error);
-          throw new Error('Failed to parse server Response');
+          throw new Error('Failed to parse server Response', {cause : error});
         }
 
         setPost(prevPost => {

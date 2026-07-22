@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type {Dispatch, SetStateAction} from 'react'
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom'
 import SignupForm from './pages/SignupForm';
@@ -20,12 +20,7 @@ const SignupFormWithProps  = ({setToken}: {setToken : SetTokenType}) => (
 
 function App() {
 
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(()=>{
-    const storedToken = localStorage.getItem('adminToken');
-    setToken(storedToken); 
-  }, [])
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('adminToken'));
 
   return (
     <Routes>
